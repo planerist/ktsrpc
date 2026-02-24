@@ -5,5 +5,5 @@ plugins {
 
 allprojects {
     group = "com.github.planerist"
-    version = "0.1.2"
+    version = "0.1.3"
 }
