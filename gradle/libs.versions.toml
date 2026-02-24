@@ -1,0 +1,60 @@
+[versions]
+jdk = "21"
+
+kotlin = "2.3.10"
+
+kotlinx-serialization = "1.10.0"
+kotlinx-coroutines = "1.10.2"
+kotlinx-datetime = "0.7.1"
+
+ktor = "3.4.0"
+
+logback = "1.5.32"
+kotlinLogging = "8.0.01"
+
+junit = "5.14.3"
+
+[libraries]
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions-jvm", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+
+ktor-client-cio = { module = "io.ktor:ktor-client-cio-jvm", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktor" }
+
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
+
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-jdk9 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk9", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-slf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+
+[bundles]
+kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
+kotlinx-coroutines-jdk9 = ["kotlinx-coroutines-core", "kotlinx-coroutines-jdk9", "kotlinx-coroutines-slf4j"]
+kotlinx-datetime = ["kotlinx-datetime"]
+ktor-server = ["ktor-server-core", "ktor-server-netty", "ktor-server-sessions", "ktor-serialization-kotlinx-json", "ktor-server-content-negotiation", "ktor-server-auth"]
+ktor-client = ["ktor-client-cio", "ktor-client-content-negotiation"]
+ktor-test = ["ktor-server-test-host"]
+test-junit5 = ["junit-jupiter", "kotlin-test-junit5"]
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

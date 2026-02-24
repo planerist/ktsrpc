@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kts-rpc Example</title>
+    <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+    <div id="app">
+        <h1>🔗 kts-rpc Example</h1>
+        <p class="subtitle">Kotlin + TypeScript RPC Framework</p>
+
+        <section id="auth-section">
+            <h2>🔐 Authentication</h2>
+            <div class="row">
+                <button id="login-alice">Login as Alice</button>
+                <button id="login-bob">Login as Bob</button>
+                <span id="auth-status" class="status">Not logged in</span>
+            </div>
+        </section>
+
+        <section id="greeter-section">
+            <h2>👋 Greeter (Simple Call)</h2>
+            <div class="row">
+                <input id="greet-input" type="text" placeholder="Enter a name" value="World" />
+                <button id="greet-btn">Greet</button>
+                <button id="greet-me-btn">Greet Me (auth)</button>
+            </div>
+            <pre id="greet-result"></pre>
+        </section>
+
+        <section id="todo-section">
+            <h2>📝 Todos (CRUD + Subscription)</h2>
+            <div class="row">
+                <input id="todo-input" type="text" placeholder="New todo..." />
+                <button id="todo-add-btn">Add</button>
+                <button id="todo-subscribe-btn">Subscribe</button>
+                <button id="todo-unsubscribe-btn" disabled>Unsubscribe</button>
+            </div>
+            <div id="todo-list"></div>
+        </section>
+
+        <section id="chat-section">
+            <h2>💬 Chat (Sealed Class Subscription)</h2>
+            <div class="row">
+                <input id="chat-input" type="text" placeholder="Type a message..." />
+                <button id="chat-send-btn">Send</button>
+                <button id="chat-subscribe-btn">Join Room</button>
+            </div>
+            <div id="chat-log"></div>
+        </section>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
