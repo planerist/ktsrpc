@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.onStart
 import net.planerist.ktsrpc.example.ChatEvent
 import net.planerist.ktsrpc.example.ChatServiceRpc
+import net.planerist.ktsrpc.example.RpcContext
 import net.planerist.ktsrpc.example.RpcContextData
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
@@ -22,7 +23,7 @@ class ChatService : ChatServiceRpc {
     private fun roomFlow(room: String): MutableSharedFlow<ChatEvent> =
         rooms.getOrPut(room) { MutableSharedFlow(replay = 10) }
 
-    override suspend fun sendMessage(context: RpcContextData, room: String, text: String) {
+    override suspend fun sendMessage(@RpcContext context: RpcContextData, room: String, text: String) {
         val userId = context.userId?.toString() ?: "anonymous"
         roomFlow(room).emit(
             ChatEvent.ChatMessage(
@@ -33,7 +34,7 @@ class ChatService : ChatServiceRpc {
         )
     }
 
-    override suspend fun subscribeChatEvents(context: RpcContextData, room: String): Flow<ChatEvent> {
+    override suspend fun subscribeChatEvents(@RpcContext context: RpcContextData, room: String): Flow<ChatEvent> {
         val userId = context.userId?.toString() ?: "anonymous"
         val flow = roomFlow(room)
 

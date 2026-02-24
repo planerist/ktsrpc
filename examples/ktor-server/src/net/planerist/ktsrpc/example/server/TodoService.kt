@@ -3,6 +3,7 @@ package net.planerist.ktsrpc.example.server
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onStart
+import net.planerist.ktsrpc.example.RpcContext
 import net.planerist.ktsrpc.example.RpcContextData
 import net.planerist.ktsrpc.example.TodoItem
 import net.planerist.ktsrpc.example.TodoServiceRpc
@@ -30,12 +31,12 @@ class TodoService : TodoServiceRpc {
         flowFor(userId).value = todosFor(userId).toList()
     }
 
-    override suspend fun listTodos(context: RpcContextData): List<TodoItem> {
+    override suspend fun listTodos(@RpcContext context: RpcContextData): List<TodoItem> {
         val userId = context.userId ?: error("Authentication required")
         return todosFor(userId).toList()
     }
 
-    override suspend fun addTodo(context: RpcContextData, title: String): TodoItem {
+    override suspend fun addTodo(@RpcContext context: RpcContextData, title: String): TodoItem {
         val userId = context.userId ?: error("Authentication required")
         val item = TodoItem(
             id = UUID.randomUUID().toString().take(8),
@@ -47,7 +48,7 @@ class TodoService : TodoServiceRpc {
         return item
     }
 
-    override suspend fun toggleTodo(context: RpcContextData, id: String): TodoItem {
+    override suspend fun toggleTodo(@RpcContext context: RpcContextData, id: String): TodoItem {
         val userId = context.userId ?: error("Authentication required")
         val todos = todosFor(userId)
         val index = todos.indexOfFirst { it.id == id }
@@ -58,13 +59,13 @@ class TodoService : TodoServiceRpc {
         return updated
     }
 
-    override suspend fun deleteTodo(context: RpcContextData, id: String) {
+    override suspend fun deleteTodo(@RpcContext context: RpcContextData, id: String) {
         val userId = context.userId ?: error("Authentication required")
         todosFor(userId).removeAll { it.id == id }
         notifyChange(userId)
     }
 
-    override suspend fun subscribeTodos(context: RpcContextData): Flow<List<TodoItem>> {
+    override suspend fun subscribeTodos(@RpcContext context: RpcContextData): Flow<List<TodoItem>> {
         val userId = context.userId ?: error("Authentication required")
         return flowFor(userId).onStart { emit(todosFor(userId).toList()) }
     }
