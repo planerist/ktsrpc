@@ -23,11 +23,34 @@ class RpcCallHandler<TContext>(
         val logger = KotlinLogging.logger {}
     }
 
-    private data class FunctionWithInstance(val func: KFunction<*>, val instance: Any)
+    private data class FunctionWithInstance(
+        val func: KFunction<*>,
+        val instance: Any,
+        val contextParamIndex: Int?,
+    )
 
-    private val methods: Map<String, FunctionWithInstance> = rpcImpls.values
-        .flatMap { rpc ->
-            rpc::class.declaredFunctions.map { it.name to FunctionWithInstance(it, rpc) }
+    private val methods: Map<String, FunctionWithInstance> = rpcImpls.entries
+        .flatMap { (interfaceKClass, rpc) ->
+            val interfaceFunctions = interfaceKClass.declaredFunctions.associateBy { it.name }
+            rpc::class.declaredFunctions.map { implFunc ->
+                val contextIndex = if (contextAnnotation != null) {
+                    val interfaceFunc = interfaceFunctions[implFunc.name]
+                    implFunc.parameters
+                        .firstOrNull { param ->
+                            param.kind != KParameter.Kind.INSTANCE && (
+                                param.findAnnotations(contextAnnotation).isNotEmpty() ||
+                                    interfaceFunc?.parameters
+                                        ?.getOrNull(param.index)
+                                        ?.findAnnotations(contextAnnotation)
+                                        ?.isNotEmpty() == true
+                            )
+                        }
+                        ?.index
+                } else {
+                    null
+                }
+                implFunc.name to FunctionWithInstance(implFunc, rpc, contextIndex)
+            }
         }
         .toMap()
 
@@ -42,9 +65,7 @@ class RpcCallHandler<TContext>(
             method.func.parameters.associateWith {
                 if (it.kind == KParameter.Kind.INSTANCE) {
                     method.instance
-                } else if (
-                    contextAnnotation != null && it.findAnnotations(contextAnnotation).isNotEmpty()
-                ) {
+                } else if (it.index == method.contextParamIndex) {
                     request.context
                 } else {
                     val paramValue = request.query[it.name]
