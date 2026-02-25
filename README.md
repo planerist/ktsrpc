@@ -1,5 +1,8 @@
 # kts-rpc
 
+[![JitPack](https://jitpack.io/v/planerist/ktsrpc.svg)](https://jitpack.io/#planerist/ktsrpc)
+[![Build](https://jitpack.io/v/planerist/ktsrpc/month.svg)](https://jitpack.io/#planerist/ktsrpc)
+
 **Kotlin + TypeScript RPC** — A code-first RPC framework that generates type-safe TypeScript clients from Kotlin interfaces.
 
 Define your API as Kotlin interfaces → run the generator → get a fully typed TypeScript client with support for queries, mutations, and real-time subscriptions over WebSockets.
@@ -62,8 +65,8 @@ repositories {
 
 // your-schema/build.gradle.kts
 dependencies {
-    implementation("com.github.planerist.kts-rpc:rpc-protocol:TAG")
-    implementation("com.github.planerist.kts-rpc:rpc-gen:TAG")
+    implementation("com.github.planerist.kts-rpc:rpc-protocol:v0.1.3")
+    implementation("com.github.planerist.kts-rpc:rpc-gen:v0.1.3")
 }
 ```
 
@@ -166,6 +169,8 @@ Open http://localhost:5173 — login, try the greeter, add todos with live updat
 | `@Serializable enum class` | `type` (string union) |
 | `sealed interface/class` | Discriminated union + type guards |
 | `Flow<T>` (return only) | `AsyncIterable<T>` |
+
+See [RELEASING.md](RELEASING.md) for how to publish a new version.
 
 ## License
 
