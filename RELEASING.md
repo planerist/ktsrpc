@@ -8,8 +8,8 @@
    ```
 2. Update the dependency version in `README.md` (Quick Start → Add Dependencies):
    ```kotlin
-   implementation("com.github.planerist.kts-rpc:rpc-protocol:v0.1.4")
-   implementation("com.github.planerist.kts-rpc:rpc-gen:v0.1.4")
+   implementation("com.github.planerist.ktsrpc:rpc-protocol:v0.1.4")
+   implementation("com.github.planerist.ktsrpc:rpc-gen:v0.1.4")
    ```
 3. Commit and push:
    ```bash
