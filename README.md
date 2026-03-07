@@ -65,8 +65,8 @@ repositories {
 
 // your-schema/build.gradle.kts
 dependencies {
-    implementation("com.github.planerist.ktsrpc:rpc-protocol:v0.1.3")
-    implementation("com.github.planerist.ktsrpc:rpc-gen:v0.1.3")
+    implementation("com.github.planerist.ktsrpc:rpc-protocol:v0.1.4")
+    implementation("com.github.planerist.ktsrpc:rpc-gen:v0.1.4")
 }
 ```
 
