@@ -98,11 +98,11 @@ export class Rpc {
         return result as readonly TodoItem[]
     }
 
-    async *subscribeTodos(options?: { signal?: AbortSignal }) : AsyncIterable<readonly TodoItem[]> {
+    async *subscribeTodos(signal: AbortSignal) : AsyncIterable<readonly TodoItem[]> {
         const iterable = subscribeToIterable(
             sink => this.rpcProxy.subscribe("subscribeTodos", {
             }, sink),
-            options?.signal
+            signal
         );
 
         yield* iterable as AsyncIterable<readonly TodoItem[]>;
@@ -123,12 +123,12 @@ export class Rpc {
         return result as void
     }
 
-    async *subscribeChatEvents(room: string, options?: { signal?: AbortSignal }) : AsyncIterable<ChatEvent> {
+    async *subscribeChatEvents(room: string, signal: AbortSignal) : AsyncIterable<ChatEvent> {
         const iterable = subscribeToIterable(
             sink => this.rpcProxy.subscribe("subscribeChatEvents", {
                 room: room
             }, sink),
-            options?.signal
+            signal
         );
 
         yield* iterable as AsyncIterable<ChatEvent>;

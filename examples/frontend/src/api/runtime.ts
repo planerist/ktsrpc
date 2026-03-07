@@ -24,7 +24,7 @@ export interface Sink<T = unknown> {
 
 export function subscribeToIterable<T>(
     subscribeFn: (sink: Sink<T>) => Unsubscribe,
-    signal?: AbortSignal
+    signal: AbortSignal
 ): AsyncIterable<T> {
     return {
         [Symbol.asyncIterator]() {
@@ -65,23 +65,21 @@ export function subscribeToIterable<T>(
 
             const unsubscribe = subscribeFn(sink);
 
-            if (signal) {
-                if (signal.aborted) {
-                    unsubscribe();
-                    return {
-                        next: () => Promise.reject(new Error("Aborted")),
-                        return: () => Promise.resolve({ value: undefined, done: true }),
-                        throw: (e) => Promise.reject(e)
-                    };
-                }
-                signal.addEventListener('abort', () => {
-                    unsubscribe?.();
-                    const err = new Error("Aborted");
-                    error = err;
-                    resolvers.forEach(resolve => resolve(Promise.reject(err)));
-                    resolvers = [];
-                });
+            if (signal.aborted) {
+                unsubscribe();
+                return {
+                    next: () => Promise.reject(new Error("Aborted")),
+                    return: () => Promise.resolve({ value: undefined, done: true }),
+                    throw: (e) => Promise.reject(e)
+                };
             }
+            signal.addEventListener('abort', () => {
+                unsubscribe?.();
+                const err = new Error("Aborted");
+                error = err;
+                resolvers.forEach(resolve => resolve(Promise.reject(err)));
+                resolvers = [];
+            });
 
             return {
                 next() {

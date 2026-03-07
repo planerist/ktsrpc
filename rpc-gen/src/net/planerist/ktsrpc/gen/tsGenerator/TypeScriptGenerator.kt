@@ -200,9 +200,9 @@ class TypeScriptGenerator(
         }
 
         val paramType = if (toJson) TsType.union(typeName, TsType.simple("null"))
-            else TsType.union(TsType.ANY, TsType.simple("null"))
+        else TsType.union(TsType.ANY, TsType.simple("null"))
         val retType = if (toJson) TsType.union(TsType.ANY, TsType.simple("null"))
-            else TsType.union(typeName, TsType.simple("null"))
+        else TsType.union(typeName, TsType.simple("null"))
 
         return TsStandaloneFunction(name, listOf(TsParam("value", paramType)), retType, body)
     }
@@ -235,9 +235,9 @@ class TypeScriptGenerator(
         }
 
         val paramType = if (toJson) TsType.union(typeName, TsType.simple("null"))
-            else TsType.union(TsType.ANY, TsType.simple("null"))
+        else TsType.union(TsType.ANY, TsType.simple("null"))
         val retType = if (toJson) TsType.union(TsType.ANY, TsType.simple("null"))
-            else TsType.union(typeName, TsType.simple("null"))
+        else TsType.union(typeName, TsType.simple("null"))
 
         return TsStandaloneFunction(name, listOf(TsParam("value", paramType)), retType, body)
     }
@@ -266,14 +266,16 @@ class TypeScriptGenerator(
         }.toMutableList()
 
         if (isFlow) {
-            tsParams.add(TsParam("options?", TsType.simple("{ signal?: AbortSignal }")))
+            tsParams.add(TsParam("signal", TsType.simple("AbortSignal")))
         }
 
         val returnType = when {
             func.returnType.isSubtypeOf(Unit::class.starProjectedType) ->
                 TsType.simple("Promise<void>")
+
             isFlow ->
                 TsType.simple("AsyncIterable<${flowItemType(func)}>")
+
             else ->
                 TsType.simple("Promise<${formatKType(func.returnType).render()}>")
         }
@@ -309,7 +311,7 @@ class TypeScriptGenerator(
                     paramAssignments.lines().forEach { statement("        $it") }
                 }
                 statement("    }, sink),")
-                statement("    options?.signal")
+                statement("    signal")
                 statement(");")
                 blank()
 
@@ -422,6 +424,7 @@ class TypeScriptGenerator(
             String::class, Char::class -> TsType.STRING
             Int::class, UInt::class, Long::class, ULong::class, Short::class, Byte::class ->
                 TsType.simple(intTypeName)
+
             Float::class, Double::class -> TsType.NUMBER
             Any::class -> TsType.ANY
             else -> {
@@ -440,6 +443,7 @@ class TypeScriptGenerator(
                             }
                             TsType.readonlyArray(formatKType(itemType))
                         }
+
                         classifier.isSubclassOf(Map::class) -> {
                             val rawKeyType = kType.arguments[0].type ?: KotlinAnyOrNull
                             val keyType = formatKType(rawKeyType)
@@ -447,6 +451,7 @@ class TypeScriptGenerator(
                             val isEnumKey = (rawKeyType.classifier as? KClass<*>)?.java?.isEnum == true
                             TsType.objectMap(keyType, valueType, isEnumKey)
                         }
+
                         else -> {
                             val baseName = formatClassType(classifier)
                             if (kType.arguments.isNotEmpty()) {

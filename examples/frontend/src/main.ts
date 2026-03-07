@@ -83,7 +83,7 @@ $("todo-subscribe-btn").addEventListener("click", async () => {
     ($("todo-unsubscribe-btn") as HTMLButtonElement).disabled = false;
 
     try {
-        for await (const todos of rpc.subscribeTodos({ signal: todoAbort.signal })) {
+        for await (const todos of rpc.subscribeTodos(todoAbort.signal)) {
             renderTodos(todos);
         }
     } catch (e: any) {
@@ -120,9 +120,10 @@ function appendChatEvent(event: ChatEvent) {
 
 $("chat-subscribe-btn").addEventListener("click", async () => {
     ($("chat-subscribe-btn") as HTMLButtonElement).disabled = true;
+    const chatAbort = new AbortController();
 
     try {
-        for await (const event of rpc.subscribeChatEvents("lobby")) {
+        for await (const event of rpc.subscribeChatEvents("lobby", chatAbort.signal)) {
             appendChatEvent(event);
         }
     } catch (e: any) {
