@@ -1,4 +1,4 @@
-name: Release JARs
+name: Release
 
 on:
   push:
@@ -9,17 +9,55 @@ permissions:
   contents: write
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
+  swift:
+    # SwiftPM takes the package straight from the tag, so it has to pass before the release:
+    # the runtime's tests, and the generated example client against the example server.
+    runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6.1.0
         with:
           distribution: temurin
           java-version: '21'
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6.4.1
+
+      - name: Check the generated Swift is up to date
+        run: |
+          ./gradlew :rpc-gen:test examples:schema:generateSwiftRpc
+          git diff --exit-code -- swift examples/swift
+
+      - name: Start the example server
+        run: |
+          ./gradlew examples:ktor-server:run > server.log 2>&1 &
+          for i in $(seq 1 90); do
+            if curl -sf -o /dev/null -X POST -H 'Content-Type: application/json' \
+                -d '{"operationName":"greet","query":{"name":"ci"}}' http://localhost:8080/rpc; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat server.log
+          exit 1
+
+      - name: Swift tests
+        run: swift test
+        env:
+          KTSRPC_EXAMPLE_SERVER: http://localhost:8080
+
+  release:
+    needs: swift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-java@v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v6.4.1
 
       - name: Build JARs
         run: ./gradlew :rpc-protocol:jar :rpc-gen:jar
@@ -29,8 +67,11 @@ jobs:
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3.0.3
         with:
+          body: |
+            Kotlin (JitPack): `com.github.planerist.ktsrpc:rpc-gen:${{ github.ref_name }}`, `com.github.planerist.ktsrpc:rpc-protocol:${{ github.ref_name }}`
+            Swift (SwiftPM): `.package(url: "https://github.com/planerist/ktsrpc.git", exact: "${{ steps.version.outputs.VERSION }}")`
           generate_release_notes: true
           files: |
             rpc-protocol/build/libs/rpc-protocol-${{ steps.version.outputs.VERSION }}.jar
