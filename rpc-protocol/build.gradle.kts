@@ -16,6 +16,12 @@ repositories {
     mavenCentral()
 }
 
+// Published: still usable from Kotlin 2.3.
+kotlin.compilerOptions {
+    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3)
+    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3)
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
 

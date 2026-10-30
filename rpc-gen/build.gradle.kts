@@ -16,6 +16,12 @@ repositories {
     mavenCentral()
 }
 
+// Published: still usable from Kotlin 2.3.
+kotlin.compilerOptions {
+    apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3)
+    languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3)
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
@@ -32,6 +38,7 @@ dependencies {
 
     // tests
     testImplementation(libs.bundles.test.junit5)
+    testImplementation(libs.bundles.kotlinx.coroutines.jdk9)
     testImplementation("com.google.code.findbugs:jsr305:3.0.2")
 }
 
