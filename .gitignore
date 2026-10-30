@@ -23,3 +23,7 @@ dist/
 .env.*
 
 yarn.lock
+# Swift
+.build/
+.swiftpm/
+Package.resolved

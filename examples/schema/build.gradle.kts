@@ -51,3 +51,25 @@ tasks.register<JavaExec>("generateTsRpc") {
         "net.planerist.ktsrpc.example.ChatServiceRpc",
     )
 }
+
+// Swift code generation task: the client the Swift example tests use (examples/swift)
+tasks.register<JavaExec>("generateSwiftRpc") {
+    dependsOn("assemble")
+
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(libs.versions.jdk.get().toInt())
+    }
+
+    group = "export"
+    description = "Generate the Swift RPC client from Kotlin interfaces"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("net.planerist.ktsrpc.gen.SwiftRpcExporter")
+
+    args = listOf(
+        "--output", "../../examples/swift/Sources/ExampleRpc/Rpc.swift",
+        "--context-annotation", "net.planerist.ktsrpc.example.RpcContext",
+        "net.planerist.ktsrpc.example.GreeterServiceRpc",
+        "net.planerist.ktsrpc.example.TodoServiceRpc",
+        "net.planerist.ktsrpc.example.ChatServiceRpc",
+    )
+}
